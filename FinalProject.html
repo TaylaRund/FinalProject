@@ -292,7 +292,8 @@
 	var tfs = document.getElementById( 'textureFS' ).textContent;
 	var pvs = document.getElementById( 'PhongVS' ).textContent;
 	var pfs = document.getElementById( 'PhongFS' ).textContent;
-	
+	var godfbo;	
+	var endscene;
 	var container, renderer, scene, camera, 
 	    mesh, plane, fov = 45;
 	var start = Date.now();
@@ -302,7 +303,7 @@
 	var backtex = new THREE.TextureLoader().load( 'fire.jpg' );
 	var geometry = new THREE.PlaneGeometry(63,35.4,1,1);
 	var mesh2;
-
+	var endcamera, endcontrols;
 	window.addEventListener( 'load', init );
 
 	function init() {
@@ -314,6 +315,13 @@
 		camera.position.z = 100;
 		camera.target = new THREE.Vector3( 0, 0, 0 );
 		scene.add( camera );
+		
+		endscene = new THREE.Scene()
+		endcamera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 1, 10000 );
+		endcontrols = new THREE.OrbitControls(endcamera)
+		endcamera.position.z = 100;
+		endcamera.target = new THREE.Vector3( 0, 0, 0 );
+		endscene.add( endcamera );
 		
 		options = {
 		        position: new THREE.Vector3(),
@@ -353,7 +361,7 @@
 		gui.add( options, "colorRandomness", 0, 1 );
 		gui.add( options, "lifetime", .1, 10 );
 		gui.add( options, "turbulence", 0, 1 );
-		gui.add( spawnerOptions, "spawnRate", 10, 30000 );
+		gui.add( spawnerOptions, "spawnRate", 10, 3000 );
 		gui.add( spawnerOptions, "timeScale", -1, 1 );
 
 		material = new THREE.ShaderMaterial( {
@@ -384,8 +392,9 @@
 		orthoCamera = new THREE.OrthographicCamera( 1 / - 2, 1 / 2, 1 / 2, 1 / - 2, .00001, 1000 );
 		orthoQuad = new THREE.Mesh( new THREE.PlaneGeometry( 1, 1 ), zoomBlurShader );
 		orthoQuad.position.z = -5;
-		orthoQuad.poistion.y = 50;
+		orthoQuad.position.y = 50;
 		orthoScene.add( orthoQuad );
+		godfbo = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight)
 
 		baseTexture = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, {
 			minFilter: THREE.LinearFilter,
@@ -420,9 +429,13 @@
 			depthWrite: true,
 		} );
 		
-		particleSystem.position.y = -40;
+		var godplane = new THREE.PlaneGeometry(20,20,1,1)
+		var godplanematerial = new THREE.MeshBasicMaterial({map:godfbo});
+		var godplaneobject = new THREE.Mesh(godplane,godplanematerial);
+		endscene.add(godplaneobject)
+		particleSystem.position.y = 1;
 		particleSystem.position.z = 10;
-		scene.add(particleSystem);
+		endscene.add(particleSystem);
 
 		var controls = new THREE.OrbitControls( camera, renderer.domElement );
 		controls.minPolarAngle = 0;
@@ -463,7 +476,7 @@
 		baseTexture.setSize( w, h );
 		glowTexture.setSize( w, h );
 
-		orthoQuad.scale.set( w, h/2, 1 );
+		orthoQuad.scale.set( w, h, 1 );
 		orthoQuad.position.y = 50;
 		orthoCamera.left   = - w / 2;
 		orthoCamera.right  =   w / 2;
@@ -488,9 +501,9 @@
 		orthoQuad.material.uniforms[ 'tBase' ].value = baseTexture.texture;
 		orthoQuad.material.uniforms[ 'tGlow' ].value = glowTexture.texture;
 
-		renderer.render( orthoScene, orthoCamera );
-
-		requestAnimationFrame( render );
+		renderer.render( orthoScene, orthoCamera, godfbo );
+		
+		renderer.render(endscene, endcamera)
 
       	}
     </script>
