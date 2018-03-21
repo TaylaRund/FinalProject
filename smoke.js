@@ -27,7 +27,7 @@ void main() {
     // } else {
         factor2 = 6.0 * 0.016 * ( 3.0 * Np + Ep +  Sp + 4.0 * Wp -  9.0 * c);
     // }
-    factor = mix(factor1, factor2, sin(tick*2.0));
+    factor = mix(factor1, factor2, ((sin(tick*2.0) / 2.0) + 0.5) / 2.0 + 0.25);
     // factor = clamp(factor, 0.0, 0.01);
     float minimum = 0.003;
     if (factor >= -minimum && factor < 0.0) factor = -minimum;

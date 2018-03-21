@@ -203,10 +203,15 @@
     	void main() {
     		// Screen: X = 1- ((255-U)*(255-L))/255
     		// vec4 color = 1.0 - ( ( 1.0 - texture2D( tGlow, vec2( vUv.x, vUv.y ) ) ) * ( 1.0 - texture2D( tBase, vUv ) ) );
-    		vec4 color = mix( texture2D( tBase, vUv ), texture2D( tGlow, vec2( vUv.x, 1.0 - vUv.y ) ), .5 );
+//    		vec4 color = mix( texture2D( tBase, vUv ), texture2D( tGlow, vec2( vUv.x, 1.0 - vUv.y ) ), .5 );
     		// vec4 color = texture2D( tBase, vUv ) + texture2D( tGlow, vUv ) * texture2D( tGlow, vUv );
-    		// vec4 color = texture2D( tGlow, vUv );
-    		gl_FragColor = vec4( color.rgb, 1.0 );
+			// vec4 color = texture2D( tGlow, vUv );
+			vec4 color = texture2D( tGlow, vUv );
+//			if (all(lessThan(color.rgb, vec3(0.1)))) {
+//				gl_FragColor = vec4(0.0);
+//			} else {
+				gl_FragColor = vec4( color.rgb, 0.5 );
+//			}
     	}
 </script>
 	  
@@ -375,7 +380,7 @@
 		mesh = new THREE.Mesh( new THREE.PlaneGeometry( 200, 200, 50, 50 ), material );
 		// mesh.position.x = 20;
 		// mesh.position.y = 130;
-		// THREE.DoubleSide( mesh );
+		mesh.material.side = THREE.DoubleSide;
 		mesh.position.z = -6;
 		scene.add( mesh );
 
@@ -430,8 +435,10 @@
 		} );
 		
 		var godplane = new THREE.PlaneGeometry(20,20,1,1)
-		var godplanematerial = new THREE.MeshBasicMaterial({map:godfbo});
+		var godplanematerial = new THREE.MeshBasicMaterial({map:godfbo.texture});
 		var godplaneobject = new THREE.Mesh(godplane,godplanematerial);
+		godplaneobject.material.transparent = true
+		godplaneobject.material.side = THREE.DoubleSide;
 		endscene.add(godplaneobject)
 		particleSystem.position.y = 1;
 		particleSystem.position.z = 10;
@@ -502,7 +509,6 @@
 		orthoQuad.material.uniforms[ 'tGlow' ].value = glowTexture.texture;
 
 		renderer.render( orthoScene, orthoCamera, godfbo );
-		
 		renderer.render(endscene, endcamera)
 
       	}
