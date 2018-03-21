@@ -437,7 +437,7 @@
 		var godbox = new THREE.BoxGeometry(1000,1000,1000);
 		var godboxmaterial = new THREE.MeshBasicMaterial({map:godfbo.texture});
 		godboxmaterial.side = THREE.BackSide;
-		var godboxobject = new THREE.Mesh(godplane,godplanematerial);
+		var godboxobject = new THREE.Mesh(godbox,godboxmaterial);
 		godboxobject.material.transparent = true
 		godboxobject.material.side = THREE.DoubleSide;
 		endscene.add(godboxobject)
