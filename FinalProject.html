@@ -434,12 +434,13 @@
 			depthWrite: true,
 		} );
 		
-		var godplane = new THREE.PlaneGeometry(20,20,1,1)
-		var godplanematerial = new THREE.MeshBasicMaterial({map:godfbo.texture});
-		var godplaneobject = new THREE.Mesh(godplane,godplanematerial);
-		godplaneobject.material.transparent = true
-		godplaneobject.material.side = THREE.DoubleSide;
-		endscene.add(godplaneobject)
+		var godbox = new THREE.BoxGeometry(1000,1000,1000);
+		var godboxmaterial = new THREE.MeshBasicMaterial({map:godfbo.texture});
+		godboxmaterial.side = THREE.BackSide;
+		var godboxobject = new THREE.Mesh(godplane,godplanematerial);
+		godboxobject.material.transparent = true
+		godboxobject.material.side = THREE.DoubleSide;
+		endscene.add(godboxobject)
 		particleSystem.position.y = 1;
 		particleSystem.position.z = 10;
 		endscene.add(particleSystem);
