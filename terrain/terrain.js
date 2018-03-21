@@ -29,26 +29,6 @@ varying vec2 vUv;
 uniform float tick;
 uniform vec3 cameraPosition;
 
-// vec3 pos_for_uv(vec2 uv) {
-// 	float height = texture2D(heightmap, uv).r;
-// 	return vec3(uv.x, uv.y, height);
-// }
-
-// vec3 diff_for_uv(vec2 uv, vec3 pos2) {
-// 	return  pos_for_uv(uv)- pos2;
-// }
-
-
-// vec3 get_normal(vec3 a, vec3 b) {
-// 	return cross(normalize(a), normalize(b));
-// }
-// vec3 calcColor(vec3 direction, vec3 lightColor, vec3 normal) {
-//     vec3 eyeDirection = normalize(-cameraPosition);
-// 	vec3 reflectionDirection = normalize(reflect(direction, normal));
-// 	float specularLightWeighting = pow(clamp(dot(reflectionDirection, eyeDirection), 0.0, 1.0), 20.0);
-//     return  (vec3(0.5, 0.5, 0.6) * lightColor * diffuseLightWeighting ) + 
-//             (vec3(0.50, 0.50, 0.5) * lightColor * specularLightWeighting );
-// }
 
 
 uniform int fakeShadow;

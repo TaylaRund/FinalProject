@@ -33,7 +33,7 @@ void main() {
     if (factor >= -minimum && factor < 0.0) factor = -minimum;
     c += factor;
     if (all(lessThan(abs(fragpos - 0.5), vec2(0.01)))) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 0.0);
     } else {
         gl_FragColor = vec4(c, c, c, c);
     }

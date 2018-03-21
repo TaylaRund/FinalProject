@@ -331,6 +331,7 @@
 		endcamera.position.z = 100;
 		endcamera.position.y = 20;
 		endcamera.target = new THREE.Vector3( 0, 0, 0 );
+		endcontrols.update()
 		endscene.add( endcamera );
 		
 		options = {
@@ -512,7 +513,7 @@
 		glowTexture.setSize( w, h );
 
 		orthoQuad.scale.set( w, h, 1 );
-		orthoQuad.position.y = 50;
+		// orthoQuad.position.y = 50;
 		orthoCamera.left   = - w / 2;
 		orthoCamera.right  =   w / 2;
 		orthoCamera.top    =   h / 2;
