@@ -25,15 +25,11 @@ function smoke_init(renderer) {
         }
     );
 
-    options = {
-        fakeShadow: true
-    }
-    gui.add(options, "fakeShadow", false, true);
     smoke_mesh = generate_smoke_mesh(bufferTexture)
     bufferScene.add(smoke_mesh)
 
     plane = new THREE.PlaneBufferGeometry( 256, 256)
-    fullScreenQuad = new THREE.Mesh( plane, new THREE.MeshBasicMaterial() );
+    fullScreenQuad = new THREE.Mesh( plane, new THREE.MeshBasicMaterial({depthWrite: false, depthTest: false}) );
 	scene.add(fullScreenQuad);
 
 	FBO_A = new THREE.WebGLRenderTarget( 256, 256, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter});

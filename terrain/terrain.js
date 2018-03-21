@@ -77,47 +77,15 @@ void main() {
 	gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
 	
 
-	// float pxStep = 1.0/2048.0;
-	// vec3 p   = pos_for_uv(vUv);
-
-	// vec3 avgnorm = vec3(0.0);
-	// vec3 Np  = diff_for_uv(vec2(vUv.x + pxStep, vUv.y), p);
-	// vec3 NEp = diff_for_uv(vec2(vUv.x + pxStep, vUv.y + pxStep), p);
-	// vec3 Ep  = diff_for_uv(vec2(vUv.x, vUv.y + pxStep), p);
-	// vec3 SEp = diff_for_uv(vec2(vUv.x - pxStep, vUv.y + pxStep), p);
-	// vec3 Sp  = diff_for_uv(vec2(vUv.x - pxStep, vUv.y), p);
-	// vec3 SWp = diff_for_uv(vec2(vUv.x - pxStep, vUv.y - pxStep), p);
-	// vec3 Wp  = diff_for_uv(vec2(vUv.x, vUv.y - pxStep), p);
-	// vec3 NWp = diff_for_uv(vec2(vUv.x + pxStep, vUv.y - pxStep), p);
-
-
-
-	// avgnorm += get_normal(Np, NEp);	
-	// avgnorm += get_normal(NEp, Ep);	
-	// avgnorm += get_normal(Ep, SEp);	
-	// avgnorm += get_normal(SEp, Sp);	
-	// avgnorm += get_normal(Sp, SWp);	
-	// avgnorm += get_normal(SWp, Wp);	
-	// avgnorm += get_normal(Wp, NWp);	
-	// avgnorm += get_normal(NWp, Np);	
-	// avgnorm += get_normal(Np, Ep);	
-	// avgnorm += get_normal(Ep, Sp);	
-	// avgnorm += get_normal(Sp, Wp);	
-	// avgnorm += get_normal(Wp, Np);	
-	// avgnorm = normalize(avgnorm);
-	
-
-	// gl_FragColor = vec4((avgnorm + 1.0) / 2.0, p.z);
-	// gl_FragColor = vec4(vec3(fbm2(vUv * 5.0 - 0.5, 100.0)), 1.0);
 }`;
 
 
 
 function generate_terrain_mesh() {
-	let geometry = new THREE.PlaneGeometry(100, 100, 250, 250);
-	let heightmap = new THREE.TextureLoader().load('heightmap.png');
-	let normalmap = new THREE.TextureLoader().load('normalmap.png');
-	let normalmap_smooth = new THREE.TextureLoader().load('normalmap_smooth.png');
+	let geometry = new THREE.PlaneGeometry(300, 300, 250, 250);
+	let heightmap = new THREE.TextureLoader().load('img/heightmap.png');
+	let normalmap = new THREE.TextureLoader().load('img/normalmap.png');
+	let normalmap_smooth = new THREE.TextureLoader().load('img/normalmap_smooth.png');
     let uniforms = {
         tick: {type: "f", value: 0},
 		fakeShadow: {type: "i", value: 1},

@@ -1,15 +1,12 @@
-var container;
+function terrain_init(renderer) {
+    var container;
 
-var camera, scene, renderer;
-var options;
-var tick = 0;
+    var camera, scene;
+    var options;
+    var tick = 0;
 
-var terrain_mesh;
-function init() {
+    var terrain_mesh;
 
-    let gui = new dat.GUI({width: 300})
-    container = document.getElementById('container');
-    console.log(container)
     let width = 1024
     let height = 1024
     camera = new THREE.PerspectiveCamera( 90, width / height, 1, 2000 );
@@ -38,7 +35,7 @@ function init() {
     //make it so that resizing the browser window also resizes the scene
     window.addEventListener('resize', onWindowResize, false);
 
-    animate();
+    terrain_animate();
     // renderk()
     // var dataURL = renderer.domElement.toDataURL();
     // window.open(dataURL, "image");
@@ -46,14 +43,14 @@ function init() {
 
 
 
-function animate() {
+function terrain_animate() {
 
     requestAnimationFrame(animate);
-    render();
+    terrain_render();
 
 }
 
-function render() {
+function terrain_render() {
     tick += 0.01;
     terrain_mesh.material.uniforms.tick.value = tick;
     terrain_mesh.material.uniforms.fakeShadow.value = options.fakeShadow ? 1 : 0
@@ -65,7 +62,7 @@ function render() {
 }
 
 
-function onWindowResize(event) {
+function terrain_onWindowResize(event) {
 
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();

@@ -21,6 +21,7 @@
 <script src="js/OrbitControls.js"></script>	
 <script src="SmokeSimulation.js"></script>
 <script src="smoke.js"></script>
+<script src="terrain/terrain.js"></script>
 <script src="./js/dat.gui.min.js"></script>
 <script src="./js/TrackballControls.js"></script>
 <script src="./js/GPUParticleSystem.js"></script>
@@ -165,7 +166,8 @@
 		vec3 color2 = vec3( 1.0, 1.0 * ( 1.0 - (3.0 * noiseVal2) ), (noiseVal2*5.0) );
 
 		// gl_FragColor = vec4( color.r, color2.g, color2.b, 1.0 );
-		gl_FragColor = vec4( color.r-.4, color.r-.4, color.r-.4, 1.0 );
+		gl_FragColor = vec4( color.r, color.r, color.r, 1.0 );
+//		gl_FragColor = vec4( color.r-.4, color.r-.4, color.r-.4, 1.0 );
 	}
 
 </script>
@@ -311,22 +313,24 @@
 	var geometry = new THREE.PlaneGeometry(63,35.4,1,1);
 	var mesh2;
 	var endcamera, endcontrols;
+	var terrainOptions;
+	var terrain;
 	window.addEventListener( 'load', init );
 
 	function init() {
-		let gui = new dat.GUI({width: 300})
 		console.log("start init");
 		container = document.getElementById( 'container' );
 		scene = new THREE.Scene();
 		camera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.z = 100;
 		camera.target = new THREE.Vector3( 0, 0, 0 );
-		scene.add( camera );
+		// scene.add( camera );
 		
 		endscene = new THREE.Scene()
-		endcamera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 1, 10000 );
+		endcamera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 0.1, 10000 );
 		endcontrols = new THREE.OrbitControls(endcamera)
 		endcamera.position.z = 100;
+		endcamera.position.y = 20;
 		endcamera.target = new THREE.Vector3( 0, 0, 0 );
 		endscene.add( endcamera );
 		
@@ -337,28 +341,27 @@
 		        velocityRandomness: 1.5,
 		        color: 0xE38C2D,
 		        colorRandomness: 0.1,
-		        turbulence: .05,
+		        turbulence: 0.0,
 		        lifetime: 1,
 		        size: 50,
 		        sizeRandomness: 1,
 		};
+		terrainOptions = {
+			fakeShadow: true
+		}
 		spawnerOptions = {
 		        spawnRate: 1500,
 		        horizontalSpeed: 0.1,
 		        verticalSpeed: 0.0,
 		        timeScale: 1
 		};
-		waterOptions = {
-		        mixVal: 0.8,
-		        uvAdjustment: 850.0
-		};
 		particleSystem = new THREE.GPUParticleSystem( {
 		        maxParticles: 250000,
-		        particleSpriteTex: new THREE.TextureLoader().load('flame.png')
+				particleSpriteTex: new THREE.TextureLoader().load('flame.png'),
+				depthTest: true,
+				depthWrite: true
 		} );
-		
-		gui.add(waterOptions, "mixVal", 0.0, 1.0);
-		gui.add(waterOptions, "uvAdjustment", 1.0, 1000.0);
+		gui.add(terrainOptions, "fakeShadow", true, false)	
 		gui.add( options, "velocityRandomness", 0, 3 );
 		gui.add( options, "positionRandomness", 0, 3 );
 		gui.add( options, "size", 1, 20 );
@@ -408,24 +411,24 @@
 			format: THREE.RGBFormat
 		} );
 
-        	glowTexture = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, {
+		glowTexture = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, {
 			minFilter: THREE.LinearFilter,
 			magFilter: THREE.LinearFilter,
 			format: THREE.RGBFormat
-        	} );
+		} );
 
-        	zoomBlurShader = new THREE.ShaderMaterial( {
-			uniforms: {
-				tDiffuse: { type: "t", value: 0, texture: glowTexture },
-				resolution: { type: "v2", value: new THREE.Vector2( window.innerWidth, window.innerHeight ) },
-				strength: { type: "f", value: .75 }
-			},
-			vertexShader: document.getElementById( 'ortho-vs' ).textContent,
-			fragmentShader: document.getElementById( 'fs_ZoomBlur' ).textContent,
-			depthWrite: true,
-        	} );
+		zoomBlurShader = new THREE.ShaderMaterial( {
+		uniforms: {
+			tDiffuse: { type: "t", value: 0, texture: glowTexture },
+			resolution: { type: "v2", value: new THREE.Vector2( window.innerWidth, window.innerHeight ) },
+			strength: { type: "f", value: .75 }
+		},
+		vertexShader: document.getElementById( 'ortho-vs' ).textContent,
+		fragmentShader: document.getElementById( 'fs_ZoomBlur' ).textContent,
+		depthWrite: true,
+		} );
 
-        	compositeShader = new THREE.ShaderMaterial( {
+		compositeShader = new THREE.ShaderMaterial( {
 			uniforms: {
 				tBase: { type: "t", value: 0, texture: baseTexture },
 				tGlow: { type: "t", value: 1, texture: glowTexture }
@@ -434,26 +437,35 @@
 			fragmentShader: document.getElementById( 'fs_Composite' ).textContent,
 			depthWrite: true,
 		} );
-		
-		var godplane = new THREE.PlaneGeometry(20,20,1,1)
-		var godplanematerial = new THREE.MeshBasicMaterial({map:godfbo.texture});
-		var godplaneobject = new THREE.Mesh(godplane,godplanematerial);
-		godplaneobject.material.transparent = true
-		godplaneobject.material.side = THREE.DoubleSide;
-		endscene.add(godplaneobject)
-		particleSystem.position.y = 1;
+
+		var godbox = new THREE.BoxGeometry(900,900,900);
+		var godboxmaterial = new THREE.MeshBasicMaterial({map:godfbo.texture});
+		godboxmaterial.side = THREE.BackSide;
+		var godboxobject = new THREE.Mesh(godbox,godboxmaterial);
+		godboxobject.material.transparent = true
+		godboxobject.material.side = THREE.DoubleSide;
+		endscene.add(godboxobject)
+
+		particleSystem.position.y = 5;
 		particleSystem.position.z = 10;
 		endscene.add(particleSystem);
+		terrain = generate_terrain_mesh()
+
+		// terrain.scale.set(2,2)
+		terrain.translateZ(-10.0);
+		terrain.rotateX(-Math.PI/2);
+		endscene.add(terrain)
 
 		smoke_plane = smoke_init(renderer)
+		smoke_plane.material.side = THREE.DoubleSide
 		smoke_plane.scale.set(0.5,0.5)
-		smoke_plane.position.y = 1;
-		smoke_plane.position.z = 5;
+		smoke_plane.position.y = 6.5;
+		smoke_plane.position.z = 9;
 		console.log(smoke_plane)
 		endscene.add(smoke_plane)
-		var controls = new THREE.OrbitControls( camera, renderer.domElement );
-		controls.minPolarAngle = 0;
-		controls.maxPolarAngle = Math.PI/2;
+		// var controls = new THREE.OrbitControls( camera, renderer.domElement );
+		// controls.minPolarAngle = 0;
+		// controls.maxPolarAngle = Math.PI/2;
 
 		onWindowResize();
 		animate();
@@ -475,6 +487,16 @@
 		        }
 		}
 		particleSystem.update( tick );
+		let worldpos = new THREE.Vector3(0,0,0)
+		endcamera.getWorldPosition(worldpos)
+		worldpos = worldpos.projectOnPlane(new THREE.Vector3(0,1,0))
+		if (worldpos.x > 0) {
+			smoke_plane.rotation.y = worldpos.angleTo(new THREE.Vector3(0,0,1));
+		} else {
+			smoke_plane.rotation.y = 3.14 + (3.14 - worldpos.angleTo(new THREE.Vector3(0,0,1)));
+		}
+		terrain.material.uniforms.fakeShadow.value = terrainOptions.fakeShadow ? 1 : 0;
+
 		render();
 	}
 
@@ -484,7 +506,7 @@
 		var h = window.innerHeight;
 
 		renderer.setSize( w, h );
-		camera.projectionMatrix.makePerspective( fov, w / h, 1, 1100 );
+		// camera.projectionMatrix.makePerspective( fov, w / h, 1, 1100 );
 		zoomBlurShader.uniforms[ 'resolution' ].value = new THREE.Vector2( w, h );
 
 		baseTexture.setSize( w, h );
