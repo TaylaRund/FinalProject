@@ -433,6 +433,12 @@
 			depthWrite: true,
 		} );
 		
+		var cubegeo = new THREE.BoxGeometry( 40, 40, 40);
+		var cubetex = new THREE.MeshBasicMaterial( {color: 0x00ffff} );
+		var cube = new THREE.Mesh( cubegeo, cubetex );
+		cube.position.z = -30;
+		endscene.add(cube);
+		
 		var godplane = new THREE.PlaneGeometry(80,80,1,1)
 		var godplanematerial = new THREE.MeshBasicMaterial({map:godfbo});
 		var godplaneobject = new THREE.Mesh(godplane,godplanematerial);
