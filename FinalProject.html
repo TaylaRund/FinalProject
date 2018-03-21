@@ -474,7 +474,7 @@
 		var h = window.innerHeight;
 
 		renderer.setSize( w, h );
-		endCamera.projectionMatrix.makePerspective( fov, w / h, 1, 1100 );
+		endcamera.projectionMatrix.makePerspective( fov, w / h, 1, 1100 );
 		zoomBlurShader.uniforms[ 'resolution' ].value = new THREE.Vector2( w, h );
 
 		baseTexture.setSize( w, h );
