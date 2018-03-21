@@ -315,10 +315,10 @@
 		console.log("start init");
 		container = document.getElementById( 'container' );
 		scene = new THREE.Scene();
-		camera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 1, 10000 );
-		camera.position.z = 100;
-		camera.target = new THREE.Vector3( 0, 0, 0 );
-		scene.add( camera );
+// 		camera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 1, 10000 );
+// 		camera.position.z = 100;
+// 		camera.target = new THREE.Vector3( 0, 0, 0 );
+// 		scene.add( camera );
 		
 		endscene = new THREE.Scene()
 		endcamera = new THREE.PerspectiveCamera( fov, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -441,9 +441,9 @@
 		particleSystem.position.z = 10;
 		endscene.add(particleSystem);
 
-		var controls = new THREE.OrbitControls( camera, renderer.domElement );
-		controls.minPolarAngle = 0;
-		controls.maxPolarAngle = Math.PI/2;
+// 		var controls = new THREE.OrbitControls( camera, renderer.domElement );
+// 		controls.minPolarAngle = 0;
+// 		controls.maxPolarAngle = Math.PI/2;
 
 		onWindowResize();
 		animate();
