@@ -19,6 +19,8 @@
 <div id="container"></div>
 <script src="js/three.js"></script>
 <script src="js/OrbitControls.js"></script>	
+<script src="SmokeSimulation.js"></script>
+<script src="smoke.js"></script>
 <script src="./js/dat.gui.min.js"></script>
 <script src="./js/TrackballControls.js"></script>
 <script src="./js/GPUParticleSystem.js"></script>
@@ -355,7 +357,6 @@
 		        particleSpriteTex: new THREE.TextureLoader().load('flame.png')
 		} );
 		
-		
 		gui.add(waterOptions, "mixVal", 0.0, 1.0);
 		gui.add(waterOptions, "uvAdjustment", 1.0, 1000.0);
 		gui.add( options, "velocityRandomness", 0, 3 );
@@ -444,6 +445,12 @@
 		particleSystem.position.z = 10;
 		endscene.add(particleSystem);
 
+		smoke_plane = smoke_init(renderer)
+		smoke_plane.scale.set(0.5,0.5)
+		smoke_plane.position.y = 1;
+		smoke_plane.position.z = 5;
+		console.log(smoke_plane)
+		endscene.add(smoke_plane)
 		var controls = new THREE.OrbitControls( camera, renderer.domElement );
 		controls.minPolarAngle = 0;
 		controls.maxPolarAngle = Math.PI/2;
