@@ -384,7 +384,7 @@
 		orthoCamera = new THREE.OrthographicCamera( 1 / - 2, 1 / 2, 1 / 2, 1 / - 2, .00001, 1000 );
 		orthoQuad = new THREE.Mesh( new THREE.PlaneGeometry( 1, 1 ), zoomBlurShader );
 		orthoQuad.position.z = -5;
-		orthoQuad.poistion.y = 50;
+		orthoQuad.position.y = 50;
 		orthoScene.add( orthoQuad );
 
 		baseTexture = new THREE.WebGLRenderTarget( window.innerWidth, window.innerHeight, {
