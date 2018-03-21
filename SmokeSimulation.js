@@ -35,8 +35,6 @@ function smoke_init(renderer) {
 	FBO_A = new THREE.WebGLRenderTarget( 256, 256, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter});
 	FBO_B = new THREE.WebGLRenderTarget( 256, 256, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter} );
 
-    //make it so that resizing the browser window also resizes the scene
-    window.addEventListener('resize', onWindowResize, false);
 
     render();
     return fullScreenQuad

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>God Rays</title>
+    <meta charset="utf-8">
+    <style>
+        body {
+            color: #ffffff;
+            margin: 0px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script src="js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="SmokeSimulation.js"></script>
+    <script src="smoke.js"></script>
+<script>
+
+
+init()
+function init() {
+	let container = document.getElementById( 'container' );
+    let scene = new THREE.Scene()
+    let camera = new THREE.PerspectiveCamera( 60, 640/640, 1, 10000 );
+    let controls = new THREE.OrbitControls(camera)
+    camera.position.z = 100;
+    controls.update()
+    let renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setClearColor(0xff0000)
+    renderer.setSize(640,640)
+    container.appendChild(renderer.domElement)
+    let smoke_plane = smoke_init(renderer)
+    smoke_plane.position.y = 6.5;
+    smoke_plane.position.z = 9;
+    smoke_plane.scale.set(0.5,0.5)
+    smoke_plane.material.side = THREE.DoubleSide
+    scene.add(smoke_plane)
+    render()
+    function render() {
+        requestAnimationFrame(render)
+        renderer.render(scene, camera)
+    }
+}
+
+</script>
+</body>
+
+</html>
