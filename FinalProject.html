@@ -16,22 +16,25 @@
     </style>
   </head>
   <body>
-    <div id="container"></div>
-    <script src="js/three.js"></script>
-    <script src="js/OrbitControls.js"></script>
-    <script id="vertexShader" type="x-shader/x-vertex">
+<div id="container"></div>
+<script src="js/three.js"></script>
+<script src="js/OrbitControls.js"></script>	
+<script src="./js/dat.gui.min.js"></script>
+<script src="./js/TrackballControls.js"></script>
+<script src="./js/GPUParticleSystem.js"></script>
+<script id="vertexShader" type="x-shader/x-vertex">
       void main() {
         gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
       }
-    </script>
-    <script id="ortho-vs" type="x-shader/x-vertex">
+</script>
+<script id="ortho-vs" type="x-shader/x-vertex">
 	varying vec2 vUv;
 	void main() {
 		vUv = uv;
 		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 	}
-    </script>
-    <script id="perlinVertexShader" type="x-shader/x-vertex">
+</script>
+<script id="perlinVertexShader" type="x-shader/x-vertex">
       	uniform float in_val; //a value that changes slowly over time...
 	uniform float displaceAmt; //controls the amount of vertex displacement...
      	varying float noiseVal, noiseVal2;
@@ -206,14 +209,104 @@
     		gl_FragColor = vec4( color.rgb, 1.0 );
     	}
 </script>
+	  
+<script id="textureVS" type="x-shader/x-vertex">
+	uniform mat4 modelMatrix;
+	uniform mat4 viewMatrix;
+	uniform mat4 projectionMatrix;
+	attribute vec3 position;
+	attribute vec2 uv;
+	varying vec2 vUV;
+	void main() {
+		vec4 position = viewMatrix * modelMatrix * vec4(position, 1.0);
+		vUV = uv;
+		gl_Position = projectionMatrix * position;
+	}
+</script>
+
+<script id="textureFS" type="x-shader/x-fragment">
+	uniform mat4 modelMatrix;
+	uniform mat4 viewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform sampler2D tPic;
+	attribute vec3 position;
+	attribute vec2 uv;
+	attribute vec3 normal;
+	varying vec2 vUv;
+	precision mediump float;
+	void main() {
+		vUv = uv;
+		gl_Position = projectionMatrix  * viewMatrix * modelMatrix  * vec4( position, 1.0 );
+	}
+</script>
+	
+<script id="PhongVS" type="x-shader/x-vertex">
+	attribute vec3 inputPosition;
+	attribute vec2 inputTexCoord;
+	attribute vec3 inputNormal;
+	uniform mat4 projection, modelview, normalMat;
+	varying vec3 normalInterp;
+	varying vec3 vertPos;
+	void main(){
+		gl_Position = projection * modelview * vec4(inputPosition, 1.0);
+		vec4 vertPos4 = modelview * vec4(inputPosition, 1.0);
+		vertPos = vec3(vertPos4) / vertPos4.w;
+		normalInterp = vec3(normalMat * vec4(inputNormal, 0.0));
+	}
+</script>
+
+<script id="PhongFS" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec3 normalInterp;
+	varying vec3 vertPos;
+	uniform int mode;
+	const vec3 lightPos = vec3(1.0,1.0,1.0);
+	const vec3 ambientColor = vec3(0.3, 0.0, 0.0);
+	const vec3 diffuseColor = vec3(0.5, 0.0, 0.0);
+	const vec3 specColor = vec3(1.0, 1.0, 1.0);
+	void main() {
+		vec3 normal = normalize(normalInterp);
+		vec3 lightDir = normalize(lightPos - vertPos);
+		vec3 reflectDir = reflect(-lightDir, normal);
+		vec3 viewDir = normalize(-vertPos);
+		float lambertian = max(dot(lightDir,normal), 0.0);
+		float specular = 0.0;
+		if(lambertian > 0.0) {
+			float specAngle = max(dot(reflectDir, viewDir), 0.0);
+			specular = pow(specAngle, 4.0);
+		}
+		gl_FragColor = vec4(ambientColor +
+	                      		lambertian*diffuseColor +
+	                      		specular*specColor, 1.0);
+		// only ambient
+		if(mode == 2) gl_FragColor = vec4(ambientColor, 1.0);
+		// only diffuse
+		if(mode == 3) gl_FragColor = vec4(lambertian*diffuseColor, 1.0);
+		// only specular
+		if(mode == 4) gl_FragColor = vec4(specular*specColor, 1.0);
+	}
+</script>	  
+	    
 <script>
-	var container, renderer, scene, camera, mesh, mesh2, plane, fov = 45;
+	var tvs = document.getElementById( 'textureVS' ).textContent;
+	var tfs = document.getElementById( 'textureFS' ).textContent;
+	var pvs = document.getElementById( 'PhongVS' ).textContent;
+	var pfs = document.getElementById( 'PhongFS' ).textContent;
+	
+	var container, renderer, scene, camera, 
+	    mesh, plane, fov = 45;
 	var start = Date.now();
 	var zoomBlurShader;
+	var tick = 0, clock = new THREE.Clock(), controls, gui = new dat.GUI( { width: 350 } ),
+	    noiseoption, options, spawnerOptions, particleSystem;
+	var backtex = new THREE.TextureLoader().load( 'fire.jpg' );
+	var geometry = new THREE.PlaneGeometry(63,35.4,1,1);
+	var mesh2;
 
 	window.addEventListener( 'load', init );
 
 	function init() {
+		let gui = new dat.GUI({width: 300})
 		console.log("start init");
 		container = document.getElementById( 'container' );
 		scene = new THREE.Scene();
@@ -221,6 +314,47 @@
 		camera.position.z = 100;
 		camera.target = new THREE.Vector3( 0, 0, 0 );
 		scene.add( camera );
+		
+		options = {
+		        position: new THREE.Vector3(),
+		        positionRandomness: 2.5,
+		        velocity: new THREE.Vector3(0, 1, 0),
+		        velocityRandomness: 1.5,
+		        color: 0xE38C2D,
+		        colorRandomness: 0.1,
+		        turbulence: .05,
+		        lifetime: 1,
+		        size: 50,
+		        sizeRandomness: 1,
+		};
+		spawnerOptions = {
+		        spawnRate: 1500,
+		        horizontalSpeed: 0.1,
+		        verticalSpeed: 0.0,
+		        timeScale: 1
+		};
+		waterOptions = {
+		        mixVal: 0.8,
+		        uvAdjustment: 850.0
+		};
+		particleSystem = new THREE.GPUParticleSystem( {
+		        maxParticles: 250000,
+		        particleSpriteTex: new THREE.TextureLoader().load('flame.png')
+		} );
+		
+		scene.add(particleSystem);
+		gui.add(waterOptions, "mixVal", 0.0, 1.0);
+		gui.add(waterOptions, "uvAdjustment", 1.0, 1000.0);
+		gui.add( options, "velocityRandomness", 0, 3 );
+		gui.add( options, "positionRandomness", 0, 3 );
+		gui.add( options, "size", 1, 20 );
+		//	    gui.add( options, "color", 0, 0xffffff);
+		gui.add( options, "sizeRandomness", 0, 25 );
+		gui.add( options, "colorRandomness", 0, 1 );
+		gui.add( options, "lifetime", .1, 10 );
+		gui.add( options, "turbulence", 0, 1 );
+		gui.add( spawnerOptions, "spawnRate", 10, 30000 );
+		gui.add( spawnerOptions, "timeScale", -1, 1 );
 
 		material = new THREE.ShaderMaterial( {
 			uniforms: {
@@ -288,9 +422,26 @@
 		controls.maxPolarAngle = Math.PI/2;
 
 		onWindowResize();
-		render();
+		animate();
 
 		console.log("end init");
+	}
+	
+	function animate() {
+		requestAnimationFrame(animate);
+		var delta = clock.getDelta() * spawnerOptions.timeScale;
+		tick += delta;
+		if ( tick < 0 ) tick = 0;
+		if ( delta > 0 ) {
+		        options.position.x = 1
+		        options.position.y = 1
+		        options.position.z = 1
+		        for ( var x = 0; x < spawnerOptions.spawnRate * delta; x++ ) {
+		            	particleSystem.spawnParticle( options );
+		        }
+		}
+		particleSystem.update( tick );
+		render();
 	}
 
 	function onWindowResize() {
