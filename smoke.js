@@ -8,7 +8,7 @@ void main() {
 `
 
 const smokefrag = `
-precision highp float;
+precision mediump float;
 varying vec2 vUv;
 uniform sampler2D bufferTexture;
 uniform float tick;

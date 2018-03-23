@@ -314,6 +314,7 @@
 	var endcamera, endcontrols;
 	var terrainOptions;
 	var terrain;
+	var smoke_render;
 	window.addEventListener( 'load', init );
 
 	function init() {
@@ -455,8 +456,10 @@
 		terrain.translateZ(-10.0);
 		terrain.rotateX(-Math.PI/2);
 		endscene.add(terrain)
-
-		smoke_plane = smoke_init(renderer)
+		let thing = smoke_init(renderer)
+		console.log(thing)
+		smoke_plane = thing.fullScreenQuad;
+		smoke_render = thing.render;
 		smoke_plane.material.side = THREE.DoubleSide
 		smoke_plane.scale.set(0.5,0.5)
 		smoke_plane.position.y = 6.5;
@@ -504,7 +507,7 @@
 
 		var w = window.innerWidth;
 		var h = window.innerHeight;
-
+		
 		renderer.setSize( w, h );
 		// camera.projectionMatrix.makePerspective( fov, w / h, 1, 1100 );
 		zoomBlurShader.uniforms[ 'resolution' ].value = new THREE.Vector2( w, h );
@@ -525,7 +528,7 @@
 	var start = Date.now();
 
 	function render() {
-
+		smoke_render()
 		// mesh.material.uniforms.in_val.value = .00005 * ( Date.now() - start );
 
 		renderer.render( scene, camera, baseTexture, true ); // render original scene

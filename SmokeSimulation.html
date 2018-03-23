@@ -34,7 +34,10 @@ function init() {
     renderer.setClearColor(0xff0000)
     renderer.setSize(640,640)
     container.appendChild(renderer.domElement)
-    let smoke_plane = smoke_init(renderer)
+    let thing = smoke_init(renderer)
+    let smoke_plane = thing.fullScreenQuad;
+    let smoke_render = thing.render;
+    // let smoke_plane = smoke_init(renderer)
     smoke_plane.position.y = 6.5;
     smoke_plane.position.z = 9;
     smoke_plane.scale.set(0.5,0.5)
@@ -42,8 +45,9 @@ function init() {
     scene.add(smoke_plane)
     render()
     function render() {
-        requestAnimationFrame(render)
+        smoke_render()
         renderer.render(scene, camera)
+        requestAnimationFrame(render)
     }
 }
 
