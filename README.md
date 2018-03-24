@@ -14,7 +14,7 @@ This project includes:
 The project can be run by cloning this repository, and opening FinalProject.html. You can also use the link below.
 
 
-The video is [here](https://raw.githubusercontent.com/TaylaRund/FinalProject/master/video.mov).
+The video is [here](https://raw.githubusercontent.com/TaylaRund/FinalProject/master/video.mp4).
 
 The link to the final project that runs in a browser is [here](https://taylarund.github.io/FinalProject/).
 
