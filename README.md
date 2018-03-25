@@ -20,8 +20,8 @@ The final project that runs in a browser is [here](https://taylarund.github.io/F
 
 The original work-in-progress slide is [here](https://docs.google.com/presentation/d/e/2PACX-1vRIYRheYBfM9U5IpaUFTEN3pROUyLcSMFA0vzZF_6HKiPVT0lXm1m7GCKsRvAr0mfuNQXvQtSqpfkct/pub?start=false&loop=true&delayms=10000).
 
-The highlight video is here:
-[YouTube](https://youtu.be/kLfK-jD4S9U)
+The highlight video is here:                              
+[YouTube](https://youtu.be/kLfK-jD4S9U)                               
 [Download](https://raw.githubusercontent.com/TaylaRund/FinalProject/master/video.mp4)
 
 The final write-up is [here](https://docs.google.com/document/d/1IRCfUWKwuyyXwoMXevDD51OWWQL0qmJAmLkR8GgYdKs/edit?usp=sharing).
