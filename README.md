@@ -11,6 +11,9 @@ This project includes:
 - Terrain by Eric
 - Fire by Rachel Trail
 
+You can move throught the scene using classic orbit controls and move the camera using the arrow keys.
+The GUI controls fire variables and shows or hides the terrain shading.
+
 The project can be run by cloning this repository, and opening FinalProject.html. You can also use the link below.
 
 The final project that runs in a browser is [here](https://taylarund.github.io/FinalProject/).
