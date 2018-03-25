@@ -24,5 +24,5 @@ The highlight video is here:
 [YouTube](https://youtu.be/kLfK-jD4S9U)                               
 [Download](https://raw.githubusercontent.com/TaylaRund/FinalProject/master/video.mp4)
 
-The final write-up is [here](https://docs.google.com/document/d/1IRCfUWKwuyyXwoMXevDD51OWWQL0qmJAmLkR8GgYdKs/edit?usp=sharing).
+The final write-up is [here](FinalProject/CMPM 163 Final Project.pdf).
 
