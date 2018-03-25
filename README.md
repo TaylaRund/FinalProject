@@ -14,6 +14,8 @@ This project includes:
 The project can be run by cloning this repository, and opening FinalProject.html. You can also use the link below.
 
 
+The original work-in-progress slide is [here](https://docs.google.com/presentation/d/e/2PACX-1vRIYRheYBfM9U5IpaUFTEN3pROUyLcSMFA0vzZF_6HKiPVT0lXm1m7GCKsRvAr0mfuNQXvQtSqpfkct/pub?start=false&loop=true&delayms=10000).
+
 The video is [here](https://raw.githubusercontent.com/TaylaRund/FinalProject/master/video.mp4).
 
 The link to the final project that runs in a browser is [here](https://taylarund.github.io/FinalProject/).
