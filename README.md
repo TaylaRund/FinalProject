@@ -22,5 +22,5 @@ The original work-in-progress slide is [here](https://docs.google.com/presentati
 
 The highlight video is [here](https://raw.githubusercontent.com/TaylaRund/FinalProject/master/video.mp4).
 
-
+The final write-up is [here](https://docs.google.com/document/d/e/2PACX-1vQOZvnEKDnM2ZTZqxWqT7p-JYW9J2zGFzU9ASgForFpvlOSnwkN-o2p5k560QDsEw50rqxmUU9pPfkK/pub).
 
